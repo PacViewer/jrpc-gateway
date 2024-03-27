@@ -3,12 +3,14 @@ package internal
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"text/template"
 	"unicode"
 )
 
 var tmplFuncs = map[string]interface{}{
-	"rpcMethod": rpcMethod,
+	"rpcMethod":   rpcMethod,
+	"methodInput": methodInput,
 }
 
 // FileTmpl is .jgw template
@@ -29,8 +31,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/jrpc-gateway"
-	"google.golang.org/protobuf/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 {{range $service := .Service}}
@@ -48,11 +49,11 @@ func {{$serviceName | printf "New%s"}} (client {{$clientName}}) {{$serviceName}}
 	}
 }
 
-func (s *{{$serviceName}}) Methods() map[string]jsonrpc.Method {
+func (s *{{$serviceName}}) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error) {
 		{{range $method := $service.GetMethod}}
 			"{{rpcMethod $package $service.GetName $method.GetName}}": func(ctx context.Context, data json.RawMessage) (any, error) {
-				req := new({{$method.GetName | printf "%sRequest"}})
+				req := new({{methodInput $method.GetInputType}})
 				err := protojson.Unmarshal(data, req)
 				if err != nil {
 					return nil, err
@@ -83,4 +84,9 @@ func camelToSnake(s string) string {
 		}
 	}
 	return buf.String()
+}
+
+func methodInput(in string) string {
+	sep := strings.Split(in, ".")
+	return sep[len(sep)-1]
 }

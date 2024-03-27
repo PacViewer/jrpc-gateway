@@ -59,7 +59,6 @@ func (g *generator) generate(file *descriptorpb.FileDescriptorProto) (*string, e
 	if len(file.GetService()) == 0 {
 		return nil, nil
 	}
-
 	buf := bytes.NewBufferString("")
 	err := FileTmpl.Execute(buf, file)
 	if err != nil {
