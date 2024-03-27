@@ -1,6 +1,6 @@
 syntax = "proto3";
 package greeting;
-option go_package = "greeting";
+option go_package = "/greeting";
 
 service GreetingService {
   rpc Greeting(GreetingReq) returns(GreetingResp) {}

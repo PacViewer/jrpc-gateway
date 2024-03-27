@@ -6,5 +6,6 @@ plugins:
   - name: go-grpc
     out: ../gen/go
     opt: paths=source_relative,require_unimplemented_servers=false
-  - name: jsonrpc-gateway
+  - name: jrpc-gateway
     out: ../gen/go
+    opt: paths=source_relative
