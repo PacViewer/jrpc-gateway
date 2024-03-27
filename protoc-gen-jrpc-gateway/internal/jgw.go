@@ -29,7 +29,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/jrpc-gateway/jsonrpc"
+	"github.com/jrpc-gateway"
 	"google.golang.org/protobuf/protobuf/encoding/protojson"
 )
 
