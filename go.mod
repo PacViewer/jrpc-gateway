@@ -1,4 +1,4 @@
-module github.com/Pactus-Contrib/jrpc-gateway/v1
+module github.com/Pactus-Contrib/jrpc-gateway
 
 go 1.22.0
 
