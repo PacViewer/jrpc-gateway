@@ -1,4 +1,4 @@
-package jsonrpc
+package jrpc
 
 const (
 	jsonrpcVersion  = "2.0"

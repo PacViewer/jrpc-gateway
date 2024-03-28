@@ -1,4 +1,4 @@
-package jsonrpc
+package jrpc
 
 import (
 	"bytes"

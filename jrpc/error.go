@@ -1,4 +1,4 @@
-package jsonrpc
+package jrpc
 
 // Error object
 type Error struct {
