@@ -3,9 +3,10 @@ package jsonrpc
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+
 	"github.com/creachadair/jrpc2/handler"
 	"github.com/creachadair/jrpc2/jhttp"
-	"net/http"
 )
 
 type method = func(ctx context.Context, message json.RawMessage) (any, error)
