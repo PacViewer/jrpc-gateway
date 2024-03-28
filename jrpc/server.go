@@ -33,10 +33,10 @@ func (s *Server) RegisterServices(svs ...Service) {
 	s.handler = jhttp.NewBridge(hd, nil)
 }
 
-func (s *Server) AsyncHttpHandle(w http.ResponseWriter, r *http.Request) {
-	go s.handler.ServeHTTP(w, r)
-}
+//func (s *Server) AsyncHttpHandle(w http.ResponseWriter, r *http.Request) {
+//	go s.handler.ServeHTTP(w, r)
+//}
 
-func (s *Server) HttpHandle(w http.ResponseWriter, r *http.Request) {
+func (s *Server) HttpHandler(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
 }
