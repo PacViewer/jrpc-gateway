@@ -68,7 +68,7 @@ func RegisterGreetingServiceServer(s grpc.ServiceRegistrar, srv GreetingServiceS
 	s.RegisterService(&GreetingService_ServiceDesc, srv)
 }
 
-func _GreetingService_Greeting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GreetingService_Greeting_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(GreetingReq)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func _GreetingService_Greeting_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/greeting.GreetingService/Greeting",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(GreetingServiceServer).Greeting(ctx, req.(*GreetingReq))
 	}
 	return interceptor(ctx, in, info, handler)

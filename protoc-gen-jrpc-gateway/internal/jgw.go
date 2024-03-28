@@ -8,7 +8,7 @@ import (
 	"unicode"
 )
 
-var tmplFuncs = map[string]interface{}{
+var tmplFuncs = map[string]any{
 	"rpcMethod":   rpcMethod,
 	"methodInput": methodInput,
 }

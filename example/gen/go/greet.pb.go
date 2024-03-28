@@ -145,7 +145,7 @@ func file_greet_proto_rawDescGZIP() []byte {
 }
 
 var file_greet_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_greet_proto_goTypes = []interface{}{
+var file_greet_proto_goTypes = []any{
 	(*GreetingReq)(nil),  // 0: greeting.GreetingReq
 	(*GreetingResp)(nil), // 1: greeting.GreetingResp
 }
@@ -165,7 +165,7 @@ func file_greet_proto_init() {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_greet_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_greet_proto_msgTypes[0].Exporter = func(v any, i int) any {
 			switch v := v.(*GreetingReq); i {
 			case 0:
 				return &v.state
@@ -177,7 +177,7 @@ func file_greet_proto_init() {
 				return nil
 			}
 		}
-		file_greet_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_greet_proto_msgTypes[1].Exporter = func(v any, i int) any {
 			switch v := v.(*GreetingResp); i {
 			case 0:
 				return &v.state
