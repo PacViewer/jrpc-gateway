@@ -10,7 +10,7 @@ all: devtools proto
 devtools:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/Pactus-Contrib/jrpc-gateway/protoc-gen-jrpc-gateway
+	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway
 
 proto:
 	$(RM) ./gen

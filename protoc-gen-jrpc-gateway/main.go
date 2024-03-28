@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/Pactus-Contrib/jrpc-gateway/protoc-gen-jrpc-gateway/internal"
 	"github.com/golang/glog"
+	"github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway/internal"
 	"os"
 )
 
