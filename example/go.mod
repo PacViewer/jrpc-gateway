@@ -1,6 +1,6 @@
 module github.com/pacviewer/jrpc-gateway/example
 
-go 1.22.0
+go 1.21
 
 require (
 	google.golang.org/grpc v1.62.1
