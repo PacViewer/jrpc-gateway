@@ -1,4 +1,4 @@
-### jrpc-gateway
+## jrpc-gateway
 jrpc-gateway is bridge between [json-rpc 2.0](https://www.jsonrpc.org/specification) and [gRPC](https://grpc.io/)
 
 This repository consists of:
