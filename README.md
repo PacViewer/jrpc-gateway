@@ -1,21 +1,29 @@
 ### jrpc-gateway
-A bridge from JSON-RPC to gRPC.
+jrpc-gateway is bridge between [json-rpc 2.0](https://www.jsonrpc.org/specification) and [gRPC](https://grpc.io/)
 
-### protoc-gen-jrpc-gateway
-JSON-RPC to gRPC protoc plugin.
+This repository consists of:
+- [jrpc](#jrpc) package 
+- [protoc-gen-jrpc-gateway](#protoc-gen-jrpc-gateway) protoc plugin
+- [protoc-gen-jrpc-doc](#protoc-gen-jrpc-doc) protoc plugin
+
+<a id="jrpc"></a>
+## jrpc
+### installation
+```bash
+go get github.com/pacviewer/jrpc-gateway/jrpc
+```
+
+<a id="protoc-gen-jrpc-gateway"></a>
+## protoc-gen-jrpc-gateway
+protoc-gen-jrpc-gateway generates json-rpc to grpc bridge code based on proto files
 
 ### Installation
-jrpc:
-```
-go get github.com/pacviewer/jrpc-gateway
-```
-plguin:
-```
-go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.1.3
+```bash
+go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.1.4
 ```
 ### Example
 greeting.proto
-```
+```go
 syntax = "proto3";
 package greeting;
 option go_package = "/greeting";
@@ -32,12 +40,12 @@ message GreetingResp {
   string message = 2;
 }
 ```
-create gen directory:
-```
+### Create gen directory
+```bash
 mkdir gen
 ```
-generate files:
-```
+### Generate files
+```bash
 protoc --go_out=gen --go_opt=paths=source_relative \
     --go-grpc_out=gen --go-grpc_opt=paths=source_relative \
     --jrpc-gateway_out=gen \
@@ -46,14 +54,14 @@ protoc --go_out=gen --go_opt=paths=source_relative \
 these three files will be created for you in gen directory:
 - greeting_grpc.pb.go
 - greeting.pb.go
-- greeting.pb.jgw.go
+- greeting_jgw.pb.go
 
-get neccessary dependencies
-```
+### Get dependencies
+```bash
 go mod tidy
 ```
 ### Register JSON-RPC methods
-```
+```go
 grpcConn, err := grpc.DialContext(
 context.Background(),
   "127.0.0.1:8686", // grpc server address
@@ -88,13 +96,25 @@ if err := server.Serve(lis); err != nil {
 }
 ```
 ### Test method call
-request:
-```
+#### Request:
+```bash
 curl -X POST -H 'Content-Type: application/json' \
      -d '{"jsonrpc":"2.0","id":"1111","method":"greeting.greeting_service.greeting", "params":{"name":"john"}}' \
      http://localhost:8687
 ```
-response:
-```
+#### Response:
+```bash
 {"jsonrpc":"2.0","id":"1111","result":{"message":"Hello john"}}
+```
+
+<a id="protoc-gen-jrpc-doc"></a>
+## protoc-gen-jrpc-doc
+### Installation
+```bash
+go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-doc@v0.1.4
+```
+### Generate doc
+```bash
+protoc --jrpc-doc_out=gen --jrpc-doc_opt=./json-rpc-md.tmpl,json-rpc.md \
+  greeting.proto
 ```
