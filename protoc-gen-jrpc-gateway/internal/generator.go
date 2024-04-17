@@ -73,6 +73,6 @@ func (g *generator) fileName(file *descriptorpb.FileDescriptorProto) string {
 	name := file.GetName()
 	ext := filepath.Ext(name)
 	base := strings.TrimSuffix(name, ext)
-	output := fmt.Sprintf("%s.pb.jgw.go", base)
+	output := fmt.Sprintf("%s_jgw.pb.go", base)
 	return output
 }
