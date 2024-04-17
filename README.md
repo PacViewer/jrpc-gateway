@@ -111,7 +111,7 @@ curl -X POST -H 'Content-Type: application/json' \
 ## protoc-gen-jrpc-doc
 ### Installation
 ```bash
-go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-doc@v0.1.4
+go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-doc/cmd/protoc-gen-jrpc-doc@v0.1.4
 ```
 ### Generate doc
 ```bash
