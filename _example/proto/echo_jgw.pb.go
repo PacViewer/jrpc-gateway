@@ -19,8 +19,8 @@ type EchoServiceJsonRpcService struct {
 	client EchoServiceClient
 }
 
-func NewEchoServiceJsonRpcService(client EchoServiceClient) EchoServiceJsonRpcService {
-	return EchoServiceJsonRpcService{
+func NewEchoServiceJsonRpcService(client EchoServiceClient) *EchoServiceJsonRpcService {
+	return &EchoServiceJsonRpcService{
 		client: client,
 	}
 }

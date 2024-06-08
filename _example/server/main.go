@@ -11,16 +11,14 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
 type Server struct {
 	sv           *grpc.Server
-	httpSv       *http.Server
+	jrpcSv       *jrpc.Server
 	grpcListener net.Listener
 	jrpcListener net.Listener
 	grpcErr      chan error
@@ -55,7 +53,7 @@ func main() {
 	}
 
 	server.sv = grpcSv
-	server.httpSv = httpSv
+	server.jrpcSv = httpSv
 	server.grpcListener = grpcLis
 	server.grpcErr = make(chan error)
 	server.jrpcListener = jrpcLis
@@ -84,12 +82,13 @@ func (s *Server) StartGRPC() {
 func (s *Server) StartJsonRPC() {
 	go func() {
 		log.Println("JSON RPC server listening on", jrpcAddr)
-		s.grpcErr <- s.httpSv.Serve(s.jrpcListener)
+		s.grpcErr <- s.jrpcSv.Serve(s.jrpcListener)
 	}()
 }
 
 func (s *Server) Stop() {
 	s.sv.GracefulStop()
+	_ = s.jrpcSv.GracefulStop(context.Background())
 }
 
 func (s *Server) Echo(ctx context.Context, req *proto.EchoRequest) (*proto.EchoResponse, error) {
@@ -123,23 +122,15 @@ func newGRPCClient() (proto.EchoServiceClient, error) {
 	return proto.NewEchoServiceClient(grpcConn), nil
 }
 
-func newJrpcSv(echoClient proto.EchoServiceJsonRpcService) (*http.Server, net.Listener, error) {
+func newJrpcSv(echoClient *proto.EchoServiceJsonRpcService) (*jrpc.Server, net.Listener, error) {
 	jrpcSv := jrpc.NewServer()
 
-	jrpcSv.RegisterServices(&echoClient)
+	jrpcSv.RegisterServices(echoClient)
 
 	jrpcListener, err := net.Listen("tcp", jrpcAddr)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", jrpcSv.HttpHandler)
-	server := &http.Server{
-		Addr:              jrpcListener.Addr().String(),
-		ReadHeaderTimeout: 3 * time.Second,
-		Handler:           mux,
-	}
-
-	return server, jrpcListener, nil
+	return jrpcSv, jrpcListener, nil
 }
