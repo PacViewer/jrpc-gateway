@@ -43,8 +43,8 @@ type {{$serviceName}} struct {
 	client	{{$clientName}}
 }
 
-func {{$serviceName | printf "New%s"}} (client {{$clientName}}) {{$serviceName}} {
-	return {{$serviceName}} {
+func {{$serviceName | printf "New%s"}} (client {{$clientName}}) *{{$serviceName}} {
+	return &{{$serviceName}} {
 		client: client,
 	}
 }
