@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"net"
 	"net/http"
-	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -33,8 +34,14 @@ func TestServer(t *testing.T) {
 	mockService := &MockService{}
 	server.RegisterServices(mockService)
 
-	ts := httptest.NewServer(http.HandlerFunc(server.HttpHandler))
-	defer ts.Close()
+	// Create a listener for the server
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	assert.NoError(t, err, "Failed to create listener")
+
+	go func() {
+		err = server.Serve(listener)
+		assert.Error(t, err, "Server failed to serve")
+	}()
 
 	requestBody, err := json.Marshal(map[string]any{
 		"jsonrpc": "2.0",
@@ -44,7 +51,7 @@ func TestServer(t *testing.T) {
 	})
 	assert.NoError(t, err, "Failed to marshal request body")
 
-	resp, err := http.Post(ts.URL, "application/json", bytes.NewBuffer(requestBody))
+	resp, err := http.Post("http://"+listener.Addr().String(), "application/json", bytes.NewBuffer(requestBody))
 	assert.NoError(t, err, "Failed to make POST request")
 	defer resp.Body.Close()
 
@@ -60,4 +67,9 @@ func TestServer(t *testing.T) {
 
 	expectedResponse := "Hello javad"
 	assert.Equal(t, expectedResponse, result["response"], "Expected response '%s'", expectedResponse)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	err = server.GracefulStop(ctx)
+	assert.NoError(t, err, "Failed to gracefully stop server")
 }
