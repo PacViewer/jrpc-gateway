@@ -19,7 +19,7 @@ protoc-gen-jrpc-gateway generates json-rpc to grpc bridge code based on proto fi
 
 ### Installation
 ```bash
-go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.1.4
+go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@latest
 ```
 ### Example
 greeting.proto
