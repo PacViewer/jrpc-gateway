@@ -76,22 +76,15 @@ greeting := pb.NewGreetingServiceClient(grpcConn)
 greetingService := pb.NewGreetingServiceJsonRpcService(greeting)
 
 jgw := jrpc.NewServer()
-jgw.RegisterServices(&greetingService)
+jgw.RegisterServices(greetingService)
 
 // json-rpc listener
 lis, err = net.Listen("tcp", "localhost:8687")
 if err != nil {
   log.Fatalln(err)
 }
-mux := http.NewServeMux()
-mux.HandleFunc("/", jgw.HttpHandler)
-server := &http.Server{
-  Handler:           mux,
-  Addr:              lis.Addr().String(),
-  ReadHeaderTimeout: 3 * time.Second,
-}
 
-if err := server.Serve(lis); err != nil {
+if err := jgw.Serve(lis); err != nil {
   log.Fatalln(err)
 }
 ```
