@@ -3,7 +3,7 @@ plugins:
   - name: go
     out: ../proto
     opt: paths=source_relative
-  - name: pacviewer/jrpc-gateway
+  - name: jrpc-gateway
     out: ../proto
   - name: jrpc-doc
     out: ../proto/docs
