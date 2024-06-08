@@ -1,0 +1,41 @@
+# JSON-RPC API Reference
+
+Echo Service
+
+{{$package := (index .Files 0).Package}}
+
+## Methods
+
+{{range $file := .Files}}
+{{range $service := $file.Services}}
+{{range $method := $service.Methods}}
+
+- [{{rpcMethod $package $service.Name $method.Name}}](#{{rpcMethod $package $service.Name $method.Name}})
+{{end}}
+{{end}}
+{{end}}
+
+---
+{{range $file := .Files}}
+{{range $service := $file.Services}}
+{{range $method := $service.Methods}}
+<a id="{{rpcMethod $package $service.Name $method.Name}}"></a>
+
+## Method {{rpcMethod $package $service.Name $method.Name}}
+
+{{$package | lower}}.{{$service.Name | lower}}.{{toJsonRpc $method.Description $method.Name}}
+
+### Parameters
+```json
+{{$method.Params}}
+```
+
+### Result
+```json
+{{$method.Result}}
+```
+---
+
+{{end}}
+{{end}}
+{{end}}

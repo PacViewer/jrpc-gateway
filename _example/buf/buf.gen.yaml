@@ -1,0 +1,16 @@
+version: v1
+plugins:
+  - name: go
+    out: ../proto
+    opt: paths=source_relative
+  - name: pacviewer/jrpc-gateway
+    out: ../proto
+  - name: jrpc-doc
+    out: ../proto/docs
+    opt: ./json-rpc-md.tmpl,json-rpc.md
+  - name: jrpc-doc
+    out: ../proto/docs
+    opt: ./json-rpc-html.tmpl,json-rpc.html
+  - name: go-grpc
+    out: ../proto
+    opt: paths=source_relative,require_unimplemented_servers=false

@@ -1,0 +1,42 @@
+<h1>JSON-RPC API Reference</h1>
+
+Echo Service
+
+{{$package := (index .Files 0).Package}}
+
+<h2>Methods</h2>
+
+{{range $file := .Files}}
+{{range $service := $file.Services}}
+{{range $method := $service.Methods}}
+
+<a href="#{{rpcMethod $package $service.Name $method.Name}}">{{rpcMethod $package $service.Name $method.Name}}</a>
+{{end}}
+{{end}}
+{{end}}
+
+<hr/>
+{{range $file := .Files}}
+{{range $service := $file.Services}}
+{{range $method := $service.Methods}}
+<a id="{{rpcMethod $package $service.Name $method.Name}}"></a>
+<h3>{{rpcMethod $package $service.Name $method.Name}} <span class="badge text-bg-primary fs-6 align-top">Method</span></h3>
+
+{{$package | lower}}.{{$service.Name | lower}}.{{toJsonRpc $method.Description $method.Name}}
+
+<h3>Parameters</h3>
+<pre>
+<code>
+{{$method.Params}}
+</code>
+</pre>
+
+<h3>Result</h3>
+<pre>
+{{$method.Result}}
+</pre>
+<hr/>
+
+{{end}}
+{{end}}
+{{end}}
