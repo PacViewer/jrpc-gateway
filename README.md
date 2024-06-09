@@ -19,7 +19,7 @@ protoc-gen-jrpc-gateway generates json-rpc to grpc bridge code based on proto fi
 
 ### Installation
 ```bash
-go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.3.1
+go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.3.2
 ```
 ### Example
 greeting.proto
@@ -62,30 +62,30 @@ go mod tidy
 ```
 ### Register JSON-RPC methods
 ```go
-grpcConn, err := grpc.DialContext(
-context.Background(),
-  "127.0.0.1:8686", // grpc server address
-  grpc.WithTransportCredentials(insecure.NewCredentials()),
-)
-
-if err != nil {
-  log.Fatalln(err)  
-}
-
-greetingService := pb.NewGreetingServiceJsonRpcService(grpcConn)
-
-jgw := jrpc.NewServer()
-jgw.RegisterServices(greetingService)
-
-// json-rpc listener
-lis, err = net.Listen("tcp", "localhost:8687")
-if err != nil {
-  log.Fatalln(err)
-}
-
-if err := jgw.Serve(lis); err != nil {
-  log.Fatalln(err)
-}
+    grpcConn, err := grpc.DialContext(
+    context.Background(),
+      "127.0.0.1:8686", // grpc server address
+      grpc.WithTransportCredentials(insecure.NewCredentials()),
+    )
+    
+    if err != nil {
+      log.Fatalln(err)  
+    }
+    
+    greetingService := pb.NewGreetingServiceJsonRPC(grpcConn)
+    
+    server := jrpc.NewServer()
+    server.RegisterServices(greetingService)
+    
+    // json-rpc listener
+    lis, err = net.Listen("tcp", "localhost:8687")
+    if err != nil {
+      log.Fatalln(err)
+    }
+    
+    if err := jgw.Serve(lis); err != nil {
+      log.Fatalln(err)
+    }
 ```
 ### Test method call
 #### Request:
@@ -102,12 +102,17 @@ curl -X POST -H 'Content-Type: application/json' \
 ```
 
 <a id="protoc-gen-jrpc-doc"></a>
+
 ## protoc-gen-jrpc-doc
+
 ### Installation
+
 ```bash
 go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-doc/cmd/protoc-gen-jrpc-doc@v0.1.4
 ```
+
 ### Generate doc
+
 ```bash
 protoc --jrpc-doc_out=gen --jrpc-doc_opt=./json-rpc-md.tmpl,json-rpc.md \
   greeting.proto

@@ -38,7 +38,7 @@ import (
 
 {{range $service := .Service}}
 
-{{$serviceName := $service.GetName | printf "%sJsonRpcService"}}
+{{$serviceName := $service.GetName | printf "%sJsonRPC"}}
 {{$paramsName := $service.GetName | printf "%s"}}
 {{$clientName := $service.GetName | printf "%sClient"}}
 {{$clientConstructor := printf "New%sClient" $service.GetName}}

@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type EchoServiceJsonRpcService struct {
+type EchoServiceJsonRPC struct {
 	client EchoServiceClient
 }
 
@@ -26,15 +26,15 @@ type paramsAndHeadersEchoService struct {
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterEchoServiceJsonRpcService register the grpc client EchoService for json-rpc.
+// RegisterEchoServiceJsonRPC register the grpc client EchoService for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterEchoServiceJsonRpcService(conn *grpc.ClientConn) *EchoServiceJsonRpcService {
-	return &EchoServiceJsonRpcService{
+func RegisterEchoServiceJsonRPC(conn *grpc.ClientConn) *EchoServiceJsonRPC {
+	return &EchoServiceJsonRPC{
 		client: NewEchoServiceClient(conn),
 	}
 }
 
-func (s *EchoServiceJsonRpcService) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *EchoServiceJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
 		"proto.echo_service.echo": func(ctx context.Context, data json.RawMessage) (any, error) {

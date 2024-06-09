@@ -50,7 +50,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	httpSv, jrpcLis, err := newJrpcSv(proto.RegisterEchoServiceJsonRpcService(grpcConn))
+	httpSv, jrpcLis, err := newJrpcSv(proto.RegisterEchoServiceJsonRpc(grpcConn))
 	if err != nil {
 		log.Fatal(err)
 	}
