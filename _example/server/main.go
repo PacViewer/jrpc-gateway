@@ -42,12 +42,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	echoClient, err := newGRPCClient()
+	grpcConn, err := grpc.NewClient(
+		address,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	httpSv, jrpcLis, err := newJrpcSv(proto.NewEchoServiceJsonRpcService(echoClient))
+	httpSv, jrpcLis, err := newJrpcSv(proto.RegisterEchoServiceJsonRpcService(grpcConn))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -108,18 +111,6 @@ func newGRPCSv(server *Server) (*grpc.Server, net.Listener, error) {
 	reflection.Register(sv)
 
 	return sv, listener, nil
-}
-
-func newGRPCClient() (proto.EchoServiceClient, error) {
-	grpcConn, err := grpc.NewClient(
-		address,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return proto.NewEchoServiceClient(grpcConn), nil
 }
 
 func newJrpcSv(echoClient *proto.EchoServiceJsonRpcService) (*jrpc.Server, net.Listener, error) {

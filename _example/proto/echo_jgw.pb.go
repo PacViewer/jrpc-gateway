@@ -12,6 +12,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -19,9 +20,11 @@ type EchoServiceJsonRpcService struct {
 	client EchoServiceClient
 }
 
-func NewEchoServiceJsonRpcService(client EchoServiceClient) *EchoServiceJsonRpcService {
+// RegisterEchoServiceJsonRpcService register the grpc client EchoService for json-rpc.
+// The handlers forward requests to the grpc endpoint over "conn".
+func RegisterEchoServiceJsonRpcService(conn *grpc.ClientConn) *EchoServiceJsonRpcService {
 	return &EchoServiceJsonRpcService{
-		client: client,
+		client: NewEchoServiceClient(conn),
 	}
 }
 
