@@ -39,6 +39,7 @@ import (
 {{range $service := .Service}}
 
 {{$serviceName := $service.GetName | printf "%sJsonRpcService"}}
+{{$paramsName := $service.GetName | printf "%s"}}
 {{$clientName := $service.GetName | printf "%sClient"}}
 {{$clientConstructor := printf "New%sClient" $service.GetName}}
 
@@ -46,7 +47,7 @@ type {{$serviceName}} struct {
 	client	{{$clientName}}
 }
 
-type paramsAndHeaders struct {
+type {{$paramsName | printf "paramsAndHeaders%s"}} struct {
 	Headers metadata.MD ` + "`json:\"headers,omitempty\"`" + `
 	Params  json.RawMessage   ` + "`json:\"params\"`" + `
 }
@@ -65,7 +66,7 @@ func (s *{{$serviceName}}) Methods() map[string]func(ctx context.Context, messag
 			"{{rpcMethod $package $service.GetName $method.GetName}}": func(ctx context.Context, data json.RawMessage) (any, error) {
 				req := new({{methodInput $method.GetInputType}})
 
-				var jrpcData paramsAndHeaders
+				var jrpcData {{$paramsName | printf "paramsAndHeaders%s"}}
 				
 				if err := json.Unmarshal(data, &jrpcData); err != nil {
 					return nil, err

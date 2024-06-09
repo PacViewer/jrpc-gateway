@@ -21,7 +21,7 @@ type EchoServiceJsonRpcService struct {
 	client EchoServiceClient
 }
 
-type paramsAndHeaders struct {
+type paramsAndHeadersEchoService struct {
 	Headers metadata.MD     `json:"headers,omitempty"`
 	Params  json.RawMessage `json:"params"`
 }
@@ -40,7 +40,7 @@ func (s *EchoServiceJsonRpcService) Methods() map[string]func(ctx context.Contex
 		"proto.echo_service.echo": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(EchoRequest)
 
-			var jrpcData paramsAndHeaders
+			var jrpcData paramsAndHeadersEchoService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -50,6 +50,7 @@ func (s *EchoServiceJsonRpcService) Methods() map[string]func(ctx context.Contex
 			if err != nil {
 				return nil, err
 			}
+
 			return s.client.Echo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
