@@ -31,6 +31,7 @@ import (
 	"context"
 	"encoding/json"
 
+    "google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -38,14 +39,17 @@ import (
 
 {{$serviceName := $service.GetName | printf "%sJsonRpcService"}}
 {{$clientName := $service.GetName | printf "%sClient"}}
+{{$clientConstructor := printf "New%sClient" $service.GetName}}
 
 type {{$serviceName}} struct {
 	client	{{$clientName}}
 }
 
-func {{$serviceName | printf "New%s"}} (client {{$clientName}}) *{{$serviceName}} {
+// {{$serviceName | printf "Register%s"}} register the grpc client {{$service.GetName}} for json-rpc.
+// The handlers forward requests to the grpc endpoint over "conn".
+func {{$serviceName | printf "Register%s"}} (conn *grpc.ClientConn) *{{$serviceName}} {
 	return &{{$serviceName}} {
-		client: client,
+		client: {{$clientConstructor}}(conn),
 	}
 }
 
