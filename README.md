@@ -19,7 +19,7 @@ protoc-gen-jrpc-gateway generates json-rpc to grpc bridge code based on proto fi
 
 ### Installation
 ```bash
-go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@latest
+go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v1.3.0
 ```
 ### Example
 greeting.proto
@@ -72,8 +72,7 @@ if err != nil {
   log.Fatalln(err)  
 }
 
-greeting := pb.NewGreetingServiceClient(grpcConn)
-greetingService := pb.NewGreetingServiceJsonRpcService(greeting)
+greetingService := pb.NewGreetingServiceJsonRpcService(grpcConn)
 
 jgw := jrpc.NewServer()
 jgw.RegisterServices(greetingService)
@@ -92,6 +91,8 @@ if err := jgw.Serve(lis); err != nil {
 #### Request:
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
+     -H 'Authorization: Basic <base64-encoded-credentials>' \
+     -H 'Custom-Header: CustomValue' \
      -d '{"jsonrpc":"2.0","id":"1111","method":"greeting.greeting_service.greeting", "params":{"name":"john"}}' \
      http://localhost:8687
 ```
