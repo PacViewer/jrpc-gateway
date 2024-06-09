@@ -32,6 +32,7 @@ import (
 	"encoding/json"
 
     "google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -43,6 +44,11 @@ import (
 
 type {{$serviceName}} struct {
 	client	{{$clientName}}
+}
+
+type paramsAndHeaders struct {
+	Headers metadata.MD ` + "`json:\"headers,omitempty\"`" + `
+	Params  json.RawMessage   ` + "`json:\"params\"`" + `
 }
 
 // {{$serviceName | printf "Register%s"}} register the grpc client {{$service.GetName}} for json-rpc.
@@ -58,11 +64,19 @@ func (s *{{$serviceName}}) Methods() map[string]func(ctx context.Context, messag
 		{{range $method := $service.GetMethod}}
 			"{{rpcMethod $package $service.GetName $method.GetName}}": func(ctx context.Context, data json.RawMessage) (any, error) {
 				req := new({{methodInput $method.GetInputType}})
-				err := protojson.Unmarshal(data, req)
+
+				var jrpcData paramsAndHeaders
+				
+				if err := json.Unmarshal(data, &jrpcData); err != nil {
+					return nil, err
+               }
+
+				err := protojson.Unmarshal(jrpcData.Params, req)
 				if err != nil {
 					return nil, err
 				}
-				return s.client.{{$method.GetName}}(ctx, req)
+
+				return s.client.{{$method.GetName}}(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 			},
 		{{end}}
 	}

@@ -3,6 +3,9 @@ package jrpc
 import (
 	"context"
 	"encoding/json"
+	"github.com/creachadair/jrpc2"
+	"google.golang.org/grpc/metadata"
+	"io"
 	"net"
 	"net/http"
 	"time"
@@ -20,6 +23,11 @@ type Service interface {
 type Server struct {
 	sv      *http.Server
 	handler http.Handler
+}
+
+type paramsAndHeaders struct {
+	Headers metadata.MD     `json:"headers,omitempty"`
+	Params  json.RawMessage `json:"params"`
 }
 
 // NewServer create json rpc server
@@ -58,9 +66,43 @@ func (s *Server) RegisterServices(svs ...Service) {
 			hd[m] = handler.New(h)
 		}
 	}
-	s.handler = jhttp.NewBridge(hd, nil)
+	s.handler = jhttp.NewBridge(hd, &jhttp.BridgeOptions{
+		ParseRequest: func(req *http.Request) ([]*jrpc2.ParsedRequest, error) {
+			body, err := io.ReadAll(req.Body)
+			if err != nil {
+				return nil, err
+			}
+			prs, err := jrpc2.ParseRequests(body)
+			if err != nil {
+				return nil, err
+			}
+
+			// Decorate the incoming request parameters with the headers.
+			for _, pr := range prs {
+				w, err := json.Marshal(paramsAndHeaders{
+					Headers: headersToMetadata(req),
+					Params:  pr.Params,
+				})
+				if err != nil {
+					return nil, err
+				}
+				pr.Params = w
+			}
+			return prs, nil
+		},
+	})
 }
 
 func (s *Server) httpHandler(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
+}
+
+func headersToMetadata(r *http.Request) metadata.MD {
+	headersMap := make(map[string]string)
+	for key, values := range r.Header {
+		if len(values) > 0 {
+			headersMap[key] = values[0]
+		}
+	}
+	return metadata.New(headersMap)
 }

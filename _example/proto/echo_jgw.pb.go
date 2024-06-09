@@ -13,11 +13,17 @@ import (
 	"encoding/json"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type EchoServiceJsonRpcService struct {
 	client EchoServiceClient
+}
+
+type paramsAndHeaders struct {
+	Headers metadata.MD     `json:"headers,omitempty"`
+	Params  json.RawMessage `json:"params"`
 }
 
 // RegisterEchoServiceJsonRpcService register the grpc client EchoService for json-rpc.
@@ -33,11 +39,18 @@ func (s *EchoServiceJsonRpcService) Methods() map[string]func(ctx context.Contex
 
 		"proto.echo_service.echo": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(EchoRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeaders
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.Echo(ctx, req)
+			return s.client.Echo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
 }

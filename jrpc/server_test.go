@@ -21,10 +21,16 @@ func (ms *MockService) Methods() map[string]method {
 }
 
 func (ms *MockService) testMethod(ctx context.Context, message json.RawMessage) (any, error) {
-	var params map[string]string
-	if err := json.Unmarshal(message, &params); err != nil {
+	var ph paramsAndHeaders
+	if err := json.Unmarshal(message, &ph); err != nil {
 		return nil, err
 	}
+
+	var params map[string]string
+	if err := json.Unmarshal(ph.Params, &params); err != nil {
+		return nil, err
+	}
+
 	return map[string]string{"response": "Hello " + params["name"]}, nil
 }
 
@@ -34,14 +40,18 @@ func TestServer(t *testing.T) {
 	mockService := &MockService{}
 	server.RegisterServices(mockService)
 
-	// Create a listener for the server
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	assert.NoError(t, err, "Failed to create listener")
 
+	serverStarted := make(chan struct{})
+
 	go func() {
-		err = server.Serve(listener)
+		close(serverStarted)
+		err := server.Serve(listener)
 		assert.Error(t, err, "Server failed to serve")
 	}()
+
+	<-serverStarted
 
 	requestBody, err := json.Marshal(map[string]any{
 		"jsonrpc": "2.0",
