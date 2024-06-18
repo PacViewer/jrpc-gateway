@@ -50,7 +50,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	httpSv, jrpcLis, err := newJrpcSv(proto.RegisterEchoServiceJsonRpc(grpcConn))
+	httpSv, jrpcLis, err := newJrpcSv(proto.RegisterEchoServiceJsonRPC(grpcConn))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -113,8 +113,8 @@ func newGRPCSv(server *Server) (*grpc.Server, net.Listener, error) {
 	return sv, listener, nil
 }
 
-func newJrpcSv(echoClient *proto.EchoServiceJsonRpcService) (*jrpc.Server, net.Listener, error) {
-	jrpcSv := jrpc.NewServer()
+func newJrpcSv(echoClient *proto.EchoServiceJsonRPC) (*jrpc.Server, net.Listener, error) {
+	jrpcSv := jrpc.NewServer(jrpc.WithCustomHeaders("x-custom-key"))
 
 	jrpcSv.RegisterServices(echoClient)
 

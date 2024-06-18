@@ -21,7 +21,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("x-custom-key", "foobar")
 
 	res, err := client.Do(req)
 	if err != nil {

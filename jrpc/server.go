@@ -4,14 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/creachadair/jrpc2"
+	"github.com/creachadair/jrpc2/handler"
+	"github.com/creachadair/jrpc2/jhttp"
 	"google.golang.org/grpc/metadata"
 	"io"
 	"net"
 	"net/http"
-	"time"
-
-	"github.com/creachadair/jrpc2/handler"
-	"github.com/creachadair/jrpc2/jhttp"
+	"strings"
 )
 
 type method = func(ctx context.Context, message json.RawMessage) (any, error)
@@ -21,8 +20,9 @@ type Service interface {
 }
 
 type Server struct {
-	sv      *http.Server
-	handler http.Handler
+	sv            *http.Server
+	handler       http.Handler
+	customHeaders []string
 }
 
 type paramsAndHeaders struct {
@@ -31,16 +31,22 @@ type paramsAndHeaders struct {
 }
 
 // NewServer create json rpc server
-func NewServer() *Server {
+func NewServer(opts ...Option) *Server {
 	sv := new(Server)
+	opt := defaultOpt()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", sv.httpHandler)
 	server := &http.Server{
-		ReadHeaderTimeout: 3 * time.Second,
+		ReadHeaderTimeout: opt.ReadHeaderTimeout,
 		Handler:           mux,
 	}
 
+	for _, o := range opts {
+		o(opt)
+	}
+
+	sv.customHeaders = opt.CustomHeadersKey
 	sv.sv = server
 
 	return sv
@@ -80,7 +86,7 @@ func (s *Server) RegisterServices(svs ...Service) {
 			// Decorate the incoming request parameters with the headers.
 			for _, pr := range prs {
 				w, err := json.Marshal(paramsAndHeaders{
-					Headers: headersToMetadata(req),
+					Headers: s.headersToMetadata(req),
 					Params:  pr.Params,
 				})
 				if err != nil {
@@ -97,12 +103,17 @@ func (s *Server) httpHandler(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
 }
 
-func headersToMetadata(r *http.Request) metadata.MD {
+func (s *Server) headersToMetadata(r *http.Request) metadata.MD {
 	headersMap := make(map[string]string)
-	for key, values := range r.Header {
-		if len(values) > 0 {
-			headersMap[key] = values[0]
+
+	for _, header := range s.customHeaders {
+		canonicalHeader := http.CanonicalHeaderKey(header)
+		if v, ok := r.Header[canonicalHeader]; ok {
+			if len(v) > 0 {
+				headersMap[strings.ToLower(canonicalHeader)] = v[0]
+			}
 		}
 	}
+
 	return metadata.New(headersMap)
 }
