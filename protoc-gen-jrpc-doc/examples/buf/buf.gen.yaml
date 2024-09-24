@@ -1,6 +1,0 @@
-version: v1
-plugins:
-  - name: jrpc-doc
-    out: ../doc
-    opt:
-      - ../templates/json-rpc-md.tmpl,json-rpc.md

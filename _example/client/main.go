@@ -12,7 +12,7 @@ func main() {
 	url := "http://localhost:8081"
 	method := "POST"
 
-	payload := strings.NewReader(`{"jsonrpc":"2.0","id":"1111","method":"proto.echo_service.echo", "params":{"name":"javad"}}`)
+	payload := strings.NewReader(`{"jsonrpc":"2.0","id":"1111","method":"proto.echo_service.echo", "params":{"name":"javad", "type": "EchoType_BAR"}}`)
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, payload)

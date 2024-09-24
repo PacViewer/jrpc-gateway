@@ -96,7 +96,7 @@ func (s *Server) Stop() {
 
 func (s *Server) Echo(ctx context.Context, req *proto.EchoRequest) (*proto.EchoResponse, error) {
 	return &proto.EchoResponse{
-		Message: fmt.Sprintf("echo %s!!!", req.Name),
+		Message: fmt.Sprintf("echo %s %v!!!", req.Name, req.Type),
 	}, nil
 }
 

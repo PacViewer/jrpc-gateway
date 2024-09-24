@@ -10,9 +10,14 @@ service EchoService {
 
 message EchoRequest {
   string name = 1;
+  EchoType type = 2;
 }
 
 message EchoResponse {
   string message = 1;
 }
 
+enum EchoType {
+  FOO = 0;
+  BAR = 1;
+}

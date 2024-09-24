@@ -28,7 +28,8 @@ proto.echoservice.
 ### Parameters
 ```json
 {
-	"name": "str"	// (string) 
+	"name": "str",	// (string) 
+	"type": "FOO or BAR"	// (string) 
 }
 ```
 
