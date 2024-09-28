@@ -1,6 +1,6 @@
 module github.com/pacviewer/jrpc-gateway
 
-go 1.23.1
+go 1.22.7
 
 require (
 	github.com/creachadair/jrpc2 v1.2.1
