@@ -4,7 +4,6 @@ jrpc-gateway is bridge between [json-rpc 2.0](https://www.jsonrpc.org/specificat
 This repository consists of:
 - [jrpc](#jrpc) package 
 - [protoc-gen-jrpc-gateway](#protoc-gen-jrpc-gateway) protoc plugin
-- [protoc-gen-jrpc-doc](#protoc-gen-jrpc-doc) protoc plugin
 
 <a id="jrpc"></a>
 ## jrpc
@@ -19,7 +18,7 @@ protoc-gen-jrpc-gateway generates json-rpc to grpc bridge code based on proto fi
 
 ### Installation
 ```bash
-go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.3.2
+go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.5.0
 ```
 ### Example
 greeting.proto
@@ -102,14 +101,6 @@ curl -X POST -H 'Content-Type: application/json' \
 ```
 
 <a id="protoc-gen-jrpc-doc"></a>
-
-## protoc-gen-jrpc-doc
-
-### Installation
-
-```bash
-go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-doc/cmd/protoc-gen-jrpc-doc@v0.1.4
-```
 
 ### Generate doc
 
