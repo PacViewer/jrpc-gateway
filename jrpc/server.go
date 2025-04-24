@@ -47,7 +47,7 @@ func NewServer(opts ...Option) *Server {
 		o(opt)
 	}
 
-	if opt.CorsOptions == nil {
+	if opt.CorsOptions != nil {
 		c := cors.New(*opt.CorsOptions)
 		server.Handler = c.Handler(mux)
 	}
