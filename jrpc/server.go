@@ -6,6 +6,7 @@ import (
 	"github.com/creachadair/jrpc2"
 	"github.com/creachadair/jrpc2/handler"
 	"github.com/creachadair/jrpc2/jhttp"
+	"github.com/rs/cors"
 	"google.golang.org/grpc/metadata"
 	"io"
 	"net"
@@ -44,6 +45,11 @@ func NewServer(opts ...Option) *Server {
 
 	for _, o := range opts {
 		o(opt)
+	}
+
+	if opt.CorsOptions != nil {
+		c := cors.New(*opt.CorsOptions)
+		server.Handler = c.Handler(mux)
 	}
 
 	sv.customHeaders = opt.CustomHeadersKey
